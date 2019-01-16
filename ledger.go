@@ -31,3 +31,11 @@ func (l *Ledger) DoRequest(method, url string, body io.Reader) (*http.Response, 
 	}
 	return client.Do(req)
 }
+
+func (l *Ledger) Ping() error {
+	resp, err := l.DoRequest("GET", "/ping", nil)
+	if resp != nil && resp.Body != nil {
+		resp.Body.Close()
+	}
+	return err
+}
