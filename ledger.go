@@ -1,6 +1,7 @@
 package ledger
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 )
@@ -29,5 +30,9 @@ func (l *Ledger) DoRequest(method, url string, body io.Reader) (*http.Response, 
 	if l.authToken != "" {
 		req.Header.Add("Authorization", l.authToken)
 	}
-	return client.Do(req)
+	resp, err := client.Do(req)
+	if err != nil || (resp != nil && resp.StatusCode > 399) {
+		return resp, fmt.Errorf("qledger: %s %s received HTTP status %s", req.Method, req.URL.String(), resp.Status)
+	}
+	return resp, err
 }
